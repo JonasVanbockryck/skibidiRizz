@@ -202,15 +202,15 @@ public class Main : BasePlugin
     }
 
 
-    [HarmonyPatch(typeof(NewOperationController), nameof(SinActionModel.IsTargetable))]
-    [HarmonyPostfix]
-    public static void Postfix_SinActionModel_IsTargetable(SinActionModel __instance, ref bool __result)
-    {
-        if (__instance.GetFaction() == UNIT_FACTION.PLAYER)
-        {
-            __result = true;
-        }
-    }
+    //[HarmonyPatch(typeof(NewOperationController), nameof(SinActionModel.IsTargetable))]
+    //[HarmonyPostfix]
+    //public static void Postfix_SinActionModel_IsTargetable(SinActionModel __instance, ref bool __result)
+    //{
+    //    if (__instance.GetFaction() == UNIT_FACTION.PLAYER)
+    //    {
+    //        __result = true;
+    //    }
+    //}
 
     [HarmonyPatch(typeof(BattleUnitModel), nameof(BattleUnitModel.IsTargetable))]
     [HarmonyPostfix]
