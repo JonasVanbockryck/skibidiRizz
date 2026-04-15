@@ -5,6 +5,7 @@ using HarmonyLib;
 using System.Collections.Generic;
 using System;
 using UI.Utility;
+using BattleUI.Operation;
 
 namespace BetterTeamKill;
 
@@ -14,9 +15,9 @@ namespace BetterTeamKill;
 public class Main : BasePlugin
 {
     public const string GUID = $"{AUTHOR}.{PLUGIN_NAME}";
-    public const string PLUGIN_NAME = "BetterTeamKill";
-    public const string VERSION = "1.0.0";
-    public const string AUTHOR = "Doppelglower";
+    public const string PLUGIN_NAME = "TeamTargetter";
+    public const string VERSION = "1.1.0";
+    public const string AUTHOR = "Doppelglower && Froggo";
     public static Harmony harmony = new(GUID);
     public static ManualLogSource sharedLog;
     public static List<int> slotIDs = [];
@@ -80,77 +81,50 @@ public class Main : BasePlugin
                         }
                         if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
                         {
-                            var currentBattleAction = unitActionSlotUI._sinAction.CurrentBattleAction;
-                            var enemyBattleAction = dragginSin.GetBattleActionModel();
-
-                            if (currentBattleAction.GetMainTargetSinAction() == dragginSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
+                            if (unitActionSlotUI._sinAction.CurrentBattleAction.GetMainTargetSinAction() == dragginSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), unitActionSlotUI._sinAction.CurrentBattleAction))
                             {
-                                battleActionModelManager.RemoveDuel(currentBattleAction);
-                                battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
-                            }
-                            else if (BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
-                            {
-                                battleActionModelManager.RemoveDuel(currentBattleAction);
-                                battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
-                                //if (currentBattleAction.IsDone && enemyBattleAction.IsDone)
-                                //{
-                                //    currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(dragginSin._currentAction._sinAction);
-                                //    dragginSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction); }
-                                //}
-                            }
-                        }
-                        else if (battleUIRoot.AbUIController.IsClickedOpSlot())
-                        {
-                            battleUIRoot.AbUIController._abOperationTracker._opDragginData._targetSinActionModel = unitActionSlotUI._sinAction;
-                            UnitSinModel clickedSin = battleUIRoot.AbUIController.GetClickedSin();
-                            if (unitActionSlotUI._sinAction != null)
-                            {
-                                battleUIRoot.CreateExpectedArrowByActionOver(clickedSin.GetBattleActionModel().SinAction, unitActionSlotUI._sinAction);
-                                battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin, unitActionSlotUI._sinAction);
-                            }
-                            else
-                            {
-                                battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin);
-                            }
-                            if (unitActionSlotUI._sinAction.currentSelectSin != null)
-                            {
-                                battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, clickedSin.GetBattleActionModel().SinAction);
-                            }
-                            if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
-                            {
-                                var currentBattleAction = unitActionSlotUI._sinAction.CurrentBattleAction;
-                                var enemyBattleAction = clickedSin.GetBattleActionModel();
-                                if (currentBattleAction.GetMainTargetSinAction() == clickedSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
-                                {
-                                    battleActionModelManager.RemoveDuel(currentBattleAction);
-                                    battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
-                                }
-
-                                else if (BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
-                                {
-                                    battleActionModelManager.RemoveDuel(currentBattleAction);
-                                    //battleActionModelManager.RemoveDuel(clickedSin.GetBattleActionModel());
-                                    //currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(clickedSin._currentAction._sinAction);
-                                    //clickedSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction);
-                                    battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
-                          
-                                }
-
-                            }
-                            }
-                        }
-                        else
-                        {
-                            battleUIRoot.ClearHighlightAll();
-                            BattleObjectManager.Instance.GetView(unitActionSlotUI._sinAction.UnitModel.InstanceID).ShowSkillInfoBySdOver();
-                            battleUIRoot.ShowSkillInfoByUpperSlotOver(unitActionSlotUI._sinAction);
-                            if (unitActionSlotUI._sinAction.currentSelectSin != null)
-                            {
-                                battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, (unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList().Count <= 0) ? null : unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList()[0]);
+                                battleActionModelManager.RemoveDuel(unitActionSlotUI._sinAction.CurrentBattleAction);
+                                battleActionModelManager.AddDuel(unitActionSlotUI._sinAction.CurrentBattleAction, dragginSin.GetBattleActionModel());
                             }
                         }
                     }
-                ));
+                    else if (battleUIRoot.AbUIController.IsClickedOpSlot())
+                    {
+                        battleUIRoot.AbUIController._abOperationTracker._opDragginData._targetSinActionModel = unitActionSlotUI._sinAction;
+                        UnitSinModel clickedSin = battleUIRoot.AbUIController.GetClickedSin();
+                        if (unitActionSlotUI._sinAction != null)
+                        {
+                            battleUIRoot.CreateExpectedArrowByActionOver(clickedSin.GetBattleActionModel().SinAction, unitActionSlotUI._sinAction);
+                            battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin, unitActionSlotUI._sinAction);
+                        }
+                        else
+                        {
+                            battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin);
+                        }
+                        if (unitActionSlotUI._sinAction.currentSelectSin != null)
+                        {
+                            battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, clickedSin.GetBattleActionModel().SinAction);
+                        }
+                        if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
+                        {
+                            if (unitActionSlotUI._sinAction.CurrentBattleAction.GetMainTargetSinAction() == clickedSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), unitActionSlotUI._sinAction.CurrentBattleAction))
+                            {
+                                battleActionModelManager.RemoveDuel(unitActionSlotUI._sinAction.CurrentBattleAction);
+                                battleActionModelManager.AddDuel(unitActionSlotUI._sinAction.CurrentBattleAction, clickedSin.GetBattleActionModel());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        battleUIRoot.ClearHighlightAll();
+                        BattleObjectManager.Instance.GetView(unitActionSlotUI._sinAction.UnitModel.InstanceID).ShowSkillInfoBySdOver();
+                        battleUIRoot.ShowSkillInfoByUpperSlotOver(unitActionSlotUI._sinAction);
+                        if (unitActionSlotUI._sinAction.currentSelectSin != null)
+                        {
+                            battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, (unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList().Count <= 0) ? null : unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList()[0]);
+                        }
+                    }
+                }));
                 unitActionSlotUI._trigger.AttachEntry(UnityEngine.EventSystems.EventTriggerType.PointerExit, new Action(() =>
                 {
                     battleUIRoot.ClearAllArrows();
@@ -194,17 +168,41 @@ public class Main : BasePlugin
                     {
                         UnitSinModel clickedSin = battleUIRoot.AbUIController.GetClickedSin();
                         battleUIRoot.OffSkillInfo();
+
                         SinActionModel sinAction = clickedSin.GetBattleActionModel().SinAction;
                         sinAction.SelectSin(clickedSin, unitActionSlotUI._sinAction);
+
+                        var selfBattleActionModel = clickedSin.GetBattleActionModel();
+                        //var targetBattleActionModel = unitActionSlotUI._sinAction.GetSinByIndex(unitActionSlotUI._sinAction.GetSlotIndex());
+                        var targetBattleActionModel = unitActionSlotUI._sinAction.CurrentBattleAction;
+
+                        if (
+                            BattleActionModel.CanDuelBoth(selfBattleActionModel, targetBattleActionModel) 
+                            && (
+                                (targetBattleActionModel.GetMainTarget() == selfBattleActionModel.Model) 
+                                || (
+                                    targetBattleActionModel.CanBeChangedTarget() 
+                                    && (selfBattleActionModel.SinAction.GetCurrentSpeed() > targetBattleActionModel.SinAction.GetCurrentSpeed())
+                                )
+                            )
+                        )
+                        {
+                            battleActionModelManager.RemoveDuel(targetBattleActionModel);
+                            battleActionModelManager.AddDuel(targetBattleActionModel, selfBattleActionModel);
+                            targetBattleActionModel._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(clickedSin._currentAction._sinAction);
+                        }
+
                         battleUIRoot.NewOperationController.EndDrag(clickedSin);
                         battleUIRoot.AbUIController._abOperationTracker.EndActionClicked();
+        
                     }
                 }));
             }
         }
     }
 
-    [HarmonyPatch(typeof(SinActionModel), nameof(SinActionModel.IsTargetable))]
+
+    [HarmonyPatch(typeof(NewOperationController), nameof(SinActionModel.IsTargetable))]
     [HarmonyPostfix]
     public static void Postfix_SinActionModel_IsTargetable(SinActionModel __instance, ref bool __result)
     {
