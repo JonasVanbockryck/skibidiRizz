@@ -78,72 +78,79 @@ public class Main : BasePlugin
                         {
                             battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, dragginSin.GetBattleActionModel().SinAction);
                         }
-                        //if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
-                        //{
-                        //    var currentBattleAction = unitActionSlotUI._sinAction.CurrentBattleAction;
-
-                        //    if (currentBattleAction.GetMainTargetSinAction() == dragginSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
-                        //    {
-                        //        battleActionModelManager.RemoveDuel(currentBattleAction);
-                        //        battleActionModelManager.AddDuel(currentBattleAction, dragginSin.GetBattleActionModel());
-                        //    } else if (BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
-                        //    {
-                        //        battleActionModelManager.RemoveDuel(currentBattleAction);
-                        //        battleActionModelManager.RemoveDuel(dragginSin.GetBattleActionModel());
-                        //        currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(dragginSin._currentAction._sinAction);
-                        //        dragginSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction);
-                        //        battleActionModelManager.AddDuel(currentBattleAction, dragginSin.GetBattleActionModel());
-
-
-                        //    }
-                        //}
-                    }
-                    else if (battleUIRoot.AbUIController.IsClickedOpSlot())
-                    {
-                        battleUIRoot.AbUIController._abOperationTracker._opDragginData._targetSinActionModel = unitActionSlotUI._sinAction;
-                        UnitSinModel clickedSin = battleUIRoot.AbUIController.GetClickedSin();
-                        if (unitActionSlotUI._sinAction != null)
-                        {
-                            battleUIRoot.CreateExpectedArrowByActionOver(clickedSin.GetBattleActionModel().SinAction, unitActionSlotUI._sinAction);
-                            battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin, unitActionSlotUI._sinAction);
-                        }
-                        else
-                        {
-                            battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin);
-                        }
-                        if (unitActionSlotUI._sinAction.currentSelectSin != null)
-                        {
-                            battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, clickedSin.GetBattleActionModel().SinAction);
-                        }
                         if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
                         {
                             var currentBattleAction = unitActionSlotUI._sinAction.CurrentBattleAction;
-                            if (currentBattleAction.GetMainTargetSinAction() == clickedSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
+                            var enemyBattleAction = dragginSin.GetBattleActionModel();
+
+                            if (currentBattleAction.GetMainTargetSinAction() == dragginSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
                             {
                                 battleActionModelManager.RemoveDuel(currentBattleAction);
-                                battleActionModelManager.AddDuel(currentBattleAction, clickedSin.GetBattleActionModel());
+                                battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
                             }
-                            else if (BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
+                            else if (BattleActionModel.CanDuelBoth(dragginSin.GetBattleActionModel(), currentBattleAction))
                             {
                                 battleActionModelManager.RemoveDuel(currentBattleAction);
-                                battleActionModelManager.RemoveDuel(clickedSin.GetBattleActionModel());
-                                currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(clickedSin._currentAction._sinAction);
-                                clickedSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction);
-                                battleActionModelManager.AddDuel(currentBattleAction, clickedSin.GetBattleActionModel());
+                                battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
+                                //if (currentBattleAction.IsDone && enemyBattleAction.IsDone)
+                                //{
+                                //    currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(dragginSin._currentAction._sinAction);
+                                //    dragginSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction); }
+                                //}
                             }
                         }
-                    }
-                    else
-                    {
-                        battleUIRoot.ClearHighlightAll();
-                        BattleObjectManager.Instance.GetView(unitActionSlotUI._sinAction.UnitModel.InstanceID).ShowSkillInfoBySdOver();
-                        battleUIRoot.ShowSkillInfoByUpperSlotOver(unitActionSlotUI._sinAction);
-                        if (unitActionSlotUI._sinAction.currentSelectSin != null)
+                        else if (battleUIRoot.AbUIController.IsClickedOpSlot())
                         {
-                            battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, (unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList().Count <= 0) ? null : unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList()[0]);
+                            battleUIRoot.AbUIController._abOperationTracker._opDragginData._targetSinActionModel = unitActionSlotUI._sinAction;
+                            UnitSinModel clickedSin = battleUIRoot.AbUIController.GetClickedSin();
+                            if (unitActionSlotUI._sinAction != null)
+                            {
+                                battleUIRoot.CreateExpectedArrowByActionOver(clickedSin.GetBattleActionModel().SinAction, unitActionSlotUI._sinAction);
+                                battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin, unitActionSlotUI._sinAction);
+                            }
+                            else
+                            {
+                                battleUIRoot.ShowExpectedSkillInfoByOverAction(clickedSin);
+                            }
+                            if (unitActionSlotUI._sinAction.currentSelectSin != null)
+                            {
+                                battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, clickedSin.GetBattleActionModel().SinAction);
+                            }
+                            if (unitActionSlotUI._sinAction.CurrentBattleAction != null)
+                            {
+                                var currentBattleAction = unitActionSlotUI._sinAction.CurrentBattleAction;
+                                var enemyBattleAction = clickedSin.GetBattleActionModel();
+                                if (currentBattleAction.GetMainTargetSinAction() == clickedSin.GetBattleActionModel().SinAction && BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
+                                {
+                                    battleActionModelManager.RemoveDuel(currentBattleAction);
+                                    battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
+                                }
+
+                                else if (BattleActionModel.CanDuelBoth(clickedSin.GetBattleActionModel(), currentBattleAction))
+                                {
+                                    battleActionModelManager.RemoveDuel(currentBattleAction);
+                                    //battleActionModelManager.RemoveDuel(clickedSin.GetBattleActionModel());
+                                    //currentBattleAction._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(clickedSin._currentAction._sinAction);
+                                    //clickedSin.GetBattleActionModel()._targetDataDetail.GetCurrentTargetSet()._mainTarget = new TargetSinActionData(unitActionSlotUI._sinAction);
+                                    battleActionModelManager.AddDuel(currentBattleAction, enemyBattleAction);
+                          
+                                }
+
+                            }
+                            }
+                        }
+                        else
+                        {
+                            battleUIRoot.ClearHighlightAll();
+                            BattleObjectManager.Instance.GetView(unitActionSlotUI._sinAction.UnitModel.InstanceID).ShowSkillInfoBySdOver();
+                            battleUIRoot.ShowSkillInfoByUpperSlotOver(unitActionSlotUI._sinAction);
+                            if (unitActionSlotUI._sinAction.currentSelectSin != null)
+                            {
+                                battleUIRoot.ShowSkillInfoByOperation(unitActionSlotUI._sinAction.currentSelectSin, (unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList().Count <= 0) ? null : unitActionSlotUI._sinAction.currentSelectSin.GetBattleActionModel().GetTargetSinActionList()[0]);
+                            }
                         }
                     }
-                }));
+                ));
                 unitActionSlotUI._trigger.AttachEntry(UnityEngine.EventSystems.EventTriggerType.PointerExit, new Action(() =>
                 {
                     battleUIRoot.ClearAllArrows();
